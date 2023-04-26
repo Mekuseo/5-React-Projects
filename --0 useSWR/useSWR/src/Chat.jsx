@@ -1,6 +1,9 @@
 import useSWR, { mutate } from "swr";
+import { useEffect } from "react";
+import io from "socket.io-client";
 
-const MESSAGES_API = "/api/messages";
+const MESSAGES_API = "https://dummyapi.io/data/v1/post/6447e3ef98826d84d1d7aa5b/comment?limit=10";
+
 const fetcher = async (url) => {
   const response = await fetch(url);
   return response.json();
@@ -8,6 +11,20 @@ const fetcher = async (url) => {
 
 function Chat() {
   const { data: messages, error } = useSWR(MESSAGES_API, fetcher);
+
+  useEffect(() => {
+    const socket = io();
+
+    socket.on("new message", () => {
+      mutate(MESSAGES_API);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+  
+
   if (error) return <div>Error: {error.message}</div>;
 
   const handleSubmit = async (event) => {
