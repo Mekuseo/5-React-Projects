@@ -64,7 +64,6 @@ export const Quiz = () => {
       <button className="nextBtn" onClick={handleNextQuestion}>
         Next Question
       </button>
-      {score}
     </div>
   );
 };
